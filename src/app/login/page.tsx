@@ -1,16 +1,19 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import AuthForm from '@/widgets/login/AuthForm'
 import Logo from '@/components/misc/Logo'
 import { env } from '@/env'
 import NFCLogin from '@/components/NFCLogin'
 import { useRouter } from 'next-nprogress-bar'
+import { useSearchParams } from 'next/navigation'
 import { useToast } from '@/lib/providers/ToastProvider'
 import { login } from '@/server/actions/login'
 
 const Page = () => {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectPath = searchParams.get('redirect') || '/'
   const { showToast } = useToast()
   
   // Обработчик получения данных аутентификации через NFC
@@ -25,7 +28,7 @@ const Page = () => {
       const result = await login(iin, password)
       if (result.success) {
         showToast('Вход выполнен успешно через NFC', 'success')
-        router.push('/')
+        router.push(redirectPath)
       } else {
         showToast('Ошибка при входе: неверные данные аутентификации', 'error')
       }
@@ -49,7 +52,7 @@ const Page = () => {
         Используйте свой аккаунт СУШ
       </p>
 
-      <AuthForm />
+      <AuthForm redirectPath={redirectPath} />
       
       <NFCLogin onAuthReceived={handleAuthReceived} />
       

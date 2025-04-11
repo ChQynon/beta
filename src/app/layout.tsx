@@ -92,6 +92,9 @@ export default function RootLayout({ children }: PropsWithChildren) {
                   <ToastProvider>
                     <PreloadPages />
                     {children}
+                    <div className="fixed bottom-0 left-0 right-0 text-center py-1 bg-background/80 backdrop-blur-sm border-t text-xs text-muted-foreground z-50">
+                      *Модель может работать медленно и иногда допускать ошибки.
+                    </div>
                   </ToastProvider>
                 </IconProvider>
               </ThemeProvider>

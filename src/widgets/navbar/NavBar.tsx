@@ -4,6 +4,7 @@ import {
   GearFine,
   House,
   Target,
+  Sparkle,
 } from '@phosphor-icons/react/dist/ssr'
 import NavLink from '@/widgets/navbar/NavLink'
 
@@ -21,6 +22,11 @@ const NavBar = () => {
           <DeviceTabletSpeaker className="mx-auto text-[24px] sm:text-[32px]" />
         }
         text="Табель"
+      />
+      <NavLink
+        href={'/ai'}
+        icon={<Sparkle className="mx-auto text-[24px] sm:text-[32px]" />}
+        text="AI"
       />
       <NavLink
         href={'/goals'}

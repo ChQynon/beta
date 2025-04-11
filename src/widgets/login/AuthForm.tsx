@@ -68,7 +68,11 @@ const schema = z.object({
 
 type AuthFormType = z.infer<typeof schema>
 
-const AuthForm = () => {
+interface AuthFormProps {
+  redirectPath?: string;
+}
+
+const AuthForm = ({ redirectPath = '/' }: AuthFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showSuccessEffect, setShowSuccessEffect] = useState(false);
   const form = useForm<AuthFormType>({
@@ -97,7 +101,7 @@ const AuthForm = () => {
         // Убираем эффект через 1.5 секунды и выполняем переход
         setTimeout(() => {
           setShowSuccessEffect(false);
-          router.push('/')
+          router.push(redirectPath)
         }, 1500);
       } else {
         if (res.errors?.iin) form.setError('iin', { message: res.errors?.iin })
