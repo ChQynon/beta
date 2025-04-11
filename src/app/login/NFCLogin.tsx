@@ -172,10 +172,15 @@ const NFCLogin: React.FC<NFCLoginProps> = ({ onAuthReceived }) => {
         if (parts.length >= 3) {
           console.log('QR-код распознан как разделенный текст:', parts);
           
+          // Добавляем проверки на undefined при доступе к элементам массива parts
+          const iin = parts[0] ? parts[0].trim() : '';
+          const password = parts[1] ? parts[1].trim() : '';
+          const deviceIdPart = parts[2] ? parts[2].trim() : '';
+          
           authData = {
-            iin: parts[0].trim(),
-            password: parts[1].trim(),
-            deviceId: parts[2].trim() || `manual-device-${Math.floor(Math.random() * 100000)}`
+            iin,
+            password,
+            deviceId: deviceIdPart || `manual-device-${Math.floor(Math.random() * 100000)}`
           };
         } else {
           console.error('Недостаточно данных в QR-коде:', parts);
