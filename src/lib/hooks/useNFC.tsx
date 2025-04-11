@@ -58,7 +58,8 @@ export interface DeviceInfo {
   timestamp: number
 }
 
-export const useNFC = (): NFCHook => {
+// Named export of the useNFC hook
+export function useNFC(): NFCHook {
   const [isAvailable, setIsAvailable] = useState(false)
   const [status, setStatus] = useState<NFCStatus>('idle')
   const [error, setError] = useState<Error | null>(null)
@@ -276,6 +277,6 @@ export const useNFC = (): NFCHook => {
   }
 }
 
-// Create a named export for easier importing
+// Make useNFC available both as a named export and via default export
 const NFCHookExport = { useNFC };
 export default NFCHookExport; 

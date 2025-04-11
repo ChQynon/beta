@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { useDeviceAuth } from '@/lib/hooks/useDeviceAuth'
 import { DeviceInfo } from '@/lib/hooks/useNFC'
-import { useNFC } from '@/lib/hooks/useNFC'
+import NFCHookExport from '@/lib/hooks/useNFC'
 import { 
   Card, 
   CardContent, 
@@ -57,7 +57,7 @@ const DeviceAuthorization = () => {
     isCurrentDeviceShared
   } = useDeviceAuth()
   
-  const { isAvailable, startWriting, status, error } = useNFC()
+  const { isAvailable, startWriting, status, error } = NFCHookExport()
   
   const [lastConnectedDevice, setLastConnectedDevice] = useState<DeviceInfo | null>(null)
   const [sourceDevice, setSourceDevice] = useState<SourceDevice | null>(null)
