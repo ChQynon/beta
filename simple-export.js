@@ -110,6 +110,7 @@ function copyStaticFiles() {
 
 /**
  * Создает базовый HTML файл
+ * @param {string} filePath - Path to create the HTML file
  */
 function createBasicHTML(filePath) {
   const htmlContent = `<!DOCTYPE html>
@@ -130,6 +131,8 @@ function createBasicHTML(filePath) {
 
 /**
  * Копирует директорию рекурсивно
+ * @param {string} source - Source directory path
+ * @param {string} destination - Destination directory path
  */
 function copyDirectory(source, destination) {
   // Пропускаем если исходной директории не существует
@@ -159,6 +162,9 @@ function copyDirectory(source, destination) {
 
 /**
  * Рекурсивно обходит директорию и возвращает список файлов
+ * @param {string} dir - Directory to walk
+ * @param {string[]} [filelist=[]] - Accumulated file list
+ * @returns {string[]} List of file paths
  */
 function walkSync(dir, filelist = []) {
   const files = fs.readdirSync(dir);

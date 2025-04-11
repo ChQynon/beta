@@ -1,4 +1,5 @@
-module.exports = {
+/** @type {import("eslint").Linter.Config} */
+const config = {
   extends: [
     'next/core-web-vitals',
     'plugin:@typescript-eslint/recommended',
@@ -23,4 +24,6 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/no-inferrable-types': 'off'
   }
-}; 
+};
+
+module.exports = config; 
