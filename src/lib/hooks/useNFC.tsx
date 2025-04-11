@@ -276,4 +276,6 @@ export const useNFC = (): NFCHook => {
   }
 }
 
-export default useNFC; 
+// Create a named export for easier importing
+const NFCHookExport = { useNFC };
+export default NFCHookExport; 
