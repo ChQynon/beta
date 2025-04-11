@@ -73,9 +73,9 @@ function formatMessageText(text: string): React.ReactNode {
         // Проверяем, содержит ли абзац блок кода
         if (processedParagraph.trim().startsWith('```') && processedParagraph.trim().endsWith('```')) {
           const code = processedParagraph.trim().slice(3, -3).trim();
-          const lines = code.split('\n') || [];
-          const language = lines.length > 0 ? lines[0].trim() : '';
-          const codeContent = lines.length > 0 ? lines.slice(1).join('\n').trim() : code;
+          const lines = code.split('\n');
+          const language = lines && lines.length > 0 && lines[0] ? lines[0].trim() : '';
+          const codeContent = lines && lines.length > 0 ? lines.slice(1).join('\n').trim() : code;
           
           return (
             <div key={`p-${paragraphIndex}`} className="relative rounded-md overflow-hidden my-3 group">
