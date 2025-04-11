@@ -16,6 +16,11 @@ interface AuthData {
   deviceId: string
 }
 
+// Интерфейс для параметров компонента
+interface NFCLoginProps {
+  onAuthReceived: (iin: string, password: string, deviceId: string) => void
+}
+
 // Определяем режим разработки
 const isDevelopment = typeof process !== 'undefined' && 
   process.env.NODE_ENV === 'development';
@@ -48,7 +53,7 @@ const generateTestData = (): AuthData => ({
   deviceId: `demo-device-${Math.floor(Math.random() * 100000)}`
 });
 
-const NFCLogin = ({ onAuthReceived }) => {
+const NFCLogin: React.FC<NFCLoginProps> = ({ onAuthReceived }) => {
   const { showToast } = useToast()
   const router = useRouter()
   
@@ -96,7 +101,7 @@ const NFCLogin = ({ onAuthReceived }) => {
   
   // Обработчик для NFC событий
   useEffect(() => {
-    const handleNFCAuthData = (event) => {
+    const handleNFCAuthData = (event: CustomEvent<AuthData>): void => {
       try {
         const customEvent = event;
         console.log('NFC данные получены:', customEvent.detail);
@@ -115,12 +120,12 @@ const NFCLogin = ({ onAuthReceived }) => {
       }
     };
     
-    window.addEventListener('nfc-auth-data', handleNFCAuthData);
-    return () => window.removeEventListener('nfc-auth-data', handleNFCAuthData);
+    window.addEventListener('nfc-auth-data', handleNFCAuthData as EventListener);
+    return () => window.removeEventListener('nfc-auth-data', handleNFCAuthData as EventListener);
   }, [showToast]);
   
   // Обработка QR-кода - с гарантированным распознаванием
-  const handleScan = (data) => {
+  const handleScan = (data: { text: string } | null): void => {
     if (!data || !data.text || isProcessing) return;
     
     try {
@@ -135,7 +140,7 @@ const NFCLogin = ({ onAuthReceived }) => {
       }
       
       // СУПЕР-УНИВЕРСАЛЬНЫЙ ПАРСЕР QR-КОДА С ГАРАНТИРОВАННЫМ РЕЗУЛЬТАТОМ
-      let authData;
+      let authData: AuthData | undefined;
       const qrText = data.text.trim();
       
       // Сначала пробуем разобрать как JSON (новый формат)
@@ -144,11 +149,15 @@ const NFCLogin = ({ onAuthReceived }) => {
         console.log('QR-код успешно разобран как JSON:', jsonData);
         
         // Проверяем наличие необходимых полей
-        if (jsonData.iin && jsonData.password && jsonData.deviceId) {
+        if (jsonData && 
+            typeof jsonData === 'object' && 
+            'iin' in jsonData && 
+            'password' in jsonData && 
+            'deviceId' in jsonData) {
           authData = {
-            iin: jsonData.iin,
-            password: jsonData.password,
-            deviceId: jsonData.deviceId
+            iin: String(jsonData.iin || ''),
+            password: String(jsonData.password || ''),
+            deviceId: String(jsonData.deviceId || '')
           };
         }
       } catch (e) {
@@ -189,7 +198,7 @@ const NFCLogin = ({ onAuthReceived }) => {
   };
   
   // Обработка ошибок сканирования
-  const handleError = (err) => {
+  const handleError = (err: Error): void => {
     console.error('Ошибка QR сканера:', err);
     
     // В демо режиме эмулируем успешное сканирование
@@ -202,7 +211,7 @@ const NFCLogin = ({ onAuthReceived }) => {
   };
   
   // Функция авторизации с гарантией входа
-  const handleAuthData = async (authData) => {
+  const handleAuthData = async (authData: AuthData): Promise<void> => {
     console.log('Начинаем вход:', authData);
     setIsProcessing(true);
     
@@ -246,7 +255,7 @@ const NFCLogin = ({ onAuthReceived }) => {
   };
   
   // Обработка ошибок входа
-  function handleLoginError(message) {
+  function handleLoginError(message: string): void {
     // Сбрасываем состояние и показываем ошибку
     setIsProcessing(false);
     setLoginSuccess(false);
@@ -257,7 +266,7 @@ const NFCLogin = ({ onAuthReceived }) => {
   }
   
   // Сохранение информации об устройстве
-  const saveDeviceInfo = (deviceId, isCurrentDevice = false) => {
+  const saveDeviceInfo = (deviceId: string, isCurrentDevice = false): boolean => {
     try {
       // Базовая информация об устройстве
       const deviceInfo = {
@@ -272,7 +281,7 @@ const NFCLogin = ({ onAuthReceived }) => {
       
       // Получаем текущий список устройств
       const storedDevices = localStorage.getItem('samga-authorized-devices') || '[]';
-      let devices = [];
+      let devices: Array<{id: string, [key: string]: any}> = [];
       
       try {
         devices = JSON.parse(storedDevices);
@@ -288,6 +297,7 @@ const NFCLogin = ({ onAuthReceived }) => {
         // Обновляем существующее устройство
         devices[deviceIndex] = {
           ...devices[deviceIndex],
+          id: deviceId, // Гарантируем, что id есть в обновленном устройстве
           lastAccess: deviceInfo.lastAccess,
           timestamp: deviceInfo.timestamp
         };
@@ -316,13 +326,13 @@ const NFCLogin = ({ onAuthReceived }) => {
   };
   
   // Переключение камеры
-  const handleToggleCamera = () => {
+  const handleToggleCamera = (): void => {
     setFacingMode(prev => prev === 'environment' ? 'user' : 'environment');
     setScannerKey(Date.now());
   };
   
   // Принудительный перезапуск сканера
-  const handleRescan = () => {
+  const handleRescan = (): void => {
     setScannerKey(Date.now());
     setIsProcessing(false);
     setLoginSuccess(false);
@@ -371,9 +381,7 @@ const NFCLogin = ({ onAuthReceived }) => {
                     onScan={handleScan}
                     constraints={{
                       video: {
-                        facingMode: facingMode,
-                        width: { min: 360, ideal: 640, max: 1280 },
-                        height: { min: 360, ideal: 640, max: 1280 }
+                        facingMode
                       }
                     }}
                     className="w-full max-w-full h-48 object-cover"
